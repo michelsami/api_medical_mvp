@@ -1,6 +1,8 @@
+import 'package:api_medical_mvp/Models/apiModel.dart';
 import 'package:api_medical_mvp/cards/Luggage_card.dart';
 import 'package:api_medical_mvp/cards/Midecals_card.dart';
-import 'package:dio/dio.dart';
+import 'package:api_medical_mvp/services/API_data.dart';
+
 import 'package:flutter/material.dart';
 
 import '../cards/Profile_card.dart';
@@ -11,26 +13,12 @@ class AllCards extends StatefulWidget {
 }
 
 class _AllCardsState extends State<AllCards> {
-  String name;
-  String country;
-  String homeCountry;
-  List luggage = List();
-  List midecals = List();
+  ApiModel apiModel = ApiModel();
   bool isLoading = true;
 
-  int age;
-
   getData() async {
-    Response data = await Dio()
-        .get("https://run.mocky.io/v3/701ff6f4-0181-47fe-9461-473f6d0aec92");
+    apiModel = await ApiData().getApiData();
 
-    name = data.data["name"];
-    age = data.data["age"];
-    country = data.data["country"];
-    homeCountry = data.data["home_country"];
-
-    luggage = data.data["luggage"];
-    midecals = data.data["midecals"];
     isLoading = false;
     setState(() {});
   }
@@ -70,10 +58,10 @@ class _AllCardsState extends State<AllCards> {
                       ),
                       // Profile
                       ProfileCard(
-                        name: "$name",
-                        age: age,
-                        country: "$country",
-                        homeCountry: "$homeCountry",
+                        name: "${apiModel.name}",
+                        age: apiModel.age,
+                        country: "${apiModel.country}",
+                        homeCountry: "${apiModel.home_country}",
                       ),
 
                       // padding
@@ -96,12 +84,12 @@ class _AllCardsState extends State<AllCards> {
                         primary: false,
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: luggage.length,
+                        itemCount: apiModel.luggage.length,
                         itemBuilder: (context, index) {
                           return LuggageCard(
-                            name: luggage[index]["name"],
-                            brand: luggage[index]["brand"],
-                            category: luggage[index]["category"],
+                            name: apiModel.luggage[index]["name"],
+                            brand: apiModel.luggage[index]["brand"],
+                            category: apiModel.luggage[index]["category"],
                           );
                         },
                       ),
@@ -124,12 +112,12 @@ class _AllCardsState extends State<AllCards> {
                         primary: false,
                         physics: NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
-                        itemCount: midecals.length,
+                        itemCount: apiModel.midecals.length,
                         itemBuilder: (context, index) {
                           return Midecals(
-                            name: midecals[index]["name"],
-                            price: midecals[index]["price"],
-                            category: midecals[index]["category"],
+                            name: apiModel.midecals[index]["name"],
+                            price: apiModel.midecals[index]["price"],
+                            category: apiModel.midecals[index]["category"],
                           );
                         },
                       ),
